@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,13 +7,75 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model users {
-  id       Int     @id
-  name     String  @unique
-  password String
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model sqlx_migrations {
+  version        BigInt?  @id
+  description    String
+  installed_on   DateTime @default(now())
+  success        Boolean
+  checksum       Bytes
+  execution_time BigInt
+
+  @@map("_sqlx_migrations")
+  @@ignore
+}
+
+model categories {
+  id           Int        @id @default(autoincrement())
+  categoryName String?
+  categoryKey  String?
+  locationId   Int?
+  updateAt     DateTime?
+  createAt     DateTime?  @default(now())
+  locations    locations? @relation(fields: [locationId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  payments     payments[]
 }
 
 model locations {
-    id Int @id
-    
+  id           Int          @id @default(autoincrement())
+  addressLine1 String
+  addressLine2 String?
+  city         String?
+  state        String?
+  postalCode   String?
+  country      String?
+  userId       Int?
+  latitude     Float?
+  longitude    Float?
+  updateAt     DateTime?
+  createAt     DateTime?    @default(now())
+  categories   categories[]
+  users        users?       @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  payments     payments[]
+}
+
+model payments {
+  id            Int         @id @default(autoincrement())
+  amount        Decimal?
+  description   String?
+  currency      String?
+  paymentMethod String?
+  categoryId    Int?
+  locationId    Int?
+  updateAt      DateTime?
+  createAt      DateTime?   @default(now())
+  locations     locations?  @relation(fields: [locationId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  categories    categories? @relation(fields: [categoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model user_settings {
+  id       Int       @id @default(autoincrement())
+  settings String?
+  userId   Int?
+  updateAt DateTime?
+  createAt DateTime? @default(now())
+  users    users?    @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model users {
+  id            Int             @id @default(autoincrement())
+  name          String?
+  password      String?
+  locations     locations[]
+  user_settings user_settings[]
 }

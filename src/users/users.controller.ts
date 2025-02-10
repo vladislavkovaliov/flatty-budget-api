@@ -1,5 +1,13 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
-import { UsersService } from './users.service';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+  Query,
+} from '@nestjs/common';
+import { UsersService } from 'src/users/users.service';
 
 @Controller('users')
 export class UsersController {
@@ -11,8 +19,27 @@ export class UsersController {
   }
 
   @Get()
-  findAll() {
-    return [];
+  async findAll(
+    @Query('skip', new ParseIntPipe({ optional: true })) skip: number,
+    @Query('take', new ParseIntPipe({ optional: true })) take: number,
+  ) {
+    const result = await this.usersService.users({
+      skip: skip,
+      take: take,
+    });
+
+    return result;
+  }
+
+  @Get('by-name/:name')
+  async findAllByName(@Param('name') name: string) {
+    const result = await this.usersService.users({
+      where: {
+        name: name,
+      },
+    });
+
+    return result;
   }
 
   @Get(':id')
