@@ -7,6 +7,12 @@ import { PrismaService } from "src/prisma";
 export class UsersService {
     constructor(private prisma: PrismaService) {}
 
+    async createUser(data: Prisma.usersCreateInput): Promise<users> {
+        return this.prisma.users.create({
+            data: data,
+        });
+    }
+
     async user(
         usersWhereUniqueInput: Prisma.usersWhereUniqueInput,
     ): Promise<users | null> {
