@@ -11,6 +11,7 @@ import {
 } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
 import { UsersService } from "src/users/users.service";
+import { CreateUsersDto } from "./dto/create-users.dto";
 
 @Controller("users")
 export class UsersController {
@@ -68,9 +69,10 @@ export class UsersController {
         return result;
     }
 
-    // TODO: to avoid any type later
     @Post()
-    create(@Body() body: any): any {
-        return body;
+    async create(@Body() createUsersDto: CreateUsersDto) {
+        const result = await this.usersService.createUser(createUsersDto);
+
+        return result;
     }
 }
