@@ -38,4 +38,17 @@ export class UsersService {
             orderBy: orderBy,
         });
     }
+
+    async updateUsers({
+        where,
+        data,
+    }: {
+        where: Prisma.usersWhereUniqueInput;
+        data: Prisma.usersUpdateInput;
+    }) {
+        return this.prisma.users.update({
+            data: data,
+            where: where,
+        });
+    }
 }
