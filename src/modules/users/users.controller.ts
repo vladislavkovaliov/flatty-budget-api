@@ -2,18 +2,19 @@ import {
     Body,
     Controller,
     DefaultValuePipe,
+    Delete,
     Get,
     HttpStatus,
     Param,
+    ParseArrayPipe,
     ParseIntPipe,
     Patch,
     Post,
     Query,
 } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
-import { UsersService } from "src/users/users.service";
-import { CreateUsersDto } from "./dto/create-users.dto";
-import { UpdateUsersDto } from "./dto/update-users.dto";
+import { CreateUsersDto, UpdateUsersDto } from "./dto";
+import { UsersService } from "./users.service";
 
 @Controller("users")
 export class UsersController {
@@ -34,7 +35,7 @@ export class UsersController {
             | Prisma.usersOrderByWithRelationInput
             | undefined;
 
-        const result = await this.usersService.users({
+        const result = await this.usersService.getUsers({
             skip: skip,
             take: take,
             orderBy: parsedOrderBy,
@@ -45,7 +46,7 @@ export class UsersController {
 
     @Get("by-name/:name")
     async findAllByName(@Param("name") name: string) {
-        const result = await this.usersService.users({
+        const result = await this.usersService.getUsers({
             where: {
                 name: name,
             },
@@ -92,6 +93,24 @@ export class UsersController {
         const result = await this.usersService.updateUsers({
             where: { id: id },
             data: { ...body },
+        });
+
+        return result;
+    }
+
+    @Delete("many")
+    async deleteMany(
+        @Query(
+            "ids",
+            new ParseArrayPipe({
+                items: Number,
+                separator: ",",
+            }),
+        )
+        ids: number[],
+    ) {
+        const result = await this.usersService.removeManyUsers({
+            where: { id: { in: ids } },
         });
 
         return result;
