@@ -2,7 +2,7 @@ import { NestFactory } from "@nestjs/core";
 import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 import { ValidationPipe } from "@nestjs/common";
 
-import { AppModule } from "./app.module";
+import { AppModule } from "src/modules";
 
 import * as morgan from "morgan";
 
@@ -22,11 +22,13 @@ async function bootstrap() {
 
     SwaggerModule.setup("api", app, documentFactory);
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     app.use(morgan("combined"));
 
     app.useGlobalPipes(
         new ValidationPipe({
             whitelist: true,
+            transform: true,
             forbidNonWhitelisted: true,
         }),
     );
