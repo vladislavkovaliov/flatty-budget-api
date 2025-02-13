@@ -13,8 +13,8 @@ import {
     Query,
 } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
-import { CreateUsersDto, UpdateUsersDto } from "./dto";
-import { UsersService } from "./users.service";
+import { CreateUsersDto, UpdateUsersDto } from "src/modules/users/dto";
+import { UsersService } from "src/modules/users/users.service";
 
 @Controller("users")
 export class UsersController {
