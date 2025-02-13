@@ -1,5 +1,5 @@
-export { UsersController } from "./users.controller";
-export { UsersService } from "./users.service";
-export { UsersModule } from "./users.module";
-export * from "./dto";
-export * from "./entities";
+export { UsersController } from "src/modules/users/users.controller";
+export { UsersService } from "src/modules/users/users.service";
+export { UsersModule } from "src/modules/users/users.module";
+export * from "src/modules/users/dto";
+export * from "src/modules/users/entities";
