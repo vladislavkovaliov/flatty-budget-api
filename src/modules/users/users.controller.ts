@@ -12,9 +12,9 @@ import {
     Post,
     Query,
 } from "@nestjs/common";
-import { Prisma } from "@prisma/client";
 import { CreateUserDto, UpdateUserDto } from "src/modules/users/dto";
 import { UsersService } from "src/modules/users/users.service";
+import { parseOrderBy } from "src/utils";
 
 @Controller("users")
 export class UsersController {
@@ -25,23 +25,31 @@ export class UsersController {
         return { status: 200 };
     }
 
+    // TODO: updates swagger query params make them optional as well
     @Get()
     async findAll(
         @Query("skip", new ParseIntPipe({ optional: true })) skip: number,
         @Query("take", new ParseIntPipe({ optional: true })) take: number,
         @Query("orderBy", new DefaultValuePipe(undefined)) orderBy: string,
     ) {
-        const parsedOrderBy = (orderBy ? JSON.parse(orderBy) : undefined) as
-            | Prisma.usersOrderByWithRelationInput
-            | undefined;
-
         const result = await this.usersService.getUsers({
             skip: skip,
             take: take,
-            orderBy: parsedOrderBy,
+            orderBy: parseOrderBy(orderBy),
         });
 
-        return result;
+        const meta = {
+            skip: skip,
+            take: take,
+            ...{
+                orderBy: orderBy ? (JSON.parse(orderBy) as unknown) : {},
+            },
+        };
+
+        return {
+            data: result,
+            meta: meta,
+        };
     }
 
     @Get("by-name/:name")
