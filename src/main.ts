@@ -23,7 +23,7 @@ async function bootstrap() {
     SwaggerModule.setup("api", app, documentFactory);
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    app.use(morgan("combined"));
+    app.use(morgan("dev"));
 
     app.useGlobalPipes(
         new ValidationPipe({

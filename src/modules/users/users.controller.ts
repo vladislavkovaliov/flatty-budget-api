@@ -13,7 +13,7 @@ import {
     Query,
 } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
-import { CreateUsersDto, UpdateUsersDto } from "src/modules/users/dto";
+import { CreateUserDto, UpdateUserDto } from "src/modules/users/dto";
 import { UsersService } from "src/modules/users/users.service";
 
 @Controller("users")
@@ -73,8 +73,8 @@ export class UsersController {
     }
 
     @Post()
-    async create(@Body() createUsersDto: CreateUsersDto) {
-        const result = await this.usersService.createUser(createUsersDto);
+    async create(@Body() createUserDto: CreateUserDto) {
+        const result = await this.usersService.createUser(createUserDto);
 
         return result;
     }
@@ -88,11 +88,11 @@ export class UsersController {
             }),
         )
         id: number,
-        @Body() body: UpdateUsersDto,
+        @Body() updateUserDto: UpdateUserDto,
     ) {
-        const result = await this.usersService.updateUsers({
+        const result = await this.usersService.updateUser({
             where: { id: id },
-            data: { ...body },
+            data: { ...updateUserDto },
         });
 
         return result;
