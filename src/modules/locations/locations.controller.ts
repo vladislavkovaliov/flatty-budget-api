@@ -2,11 +2,22 @@ import {
     Controller,
     DefaultValuePipe,
     Get,
+    HttpStatus,
     ParseIntPipe,
     Query,
+    Delete,
+    Param,
+    Body,
+    Post,
+    Patch,
+    ParseArrayPipe,
 } from "@nestjs/common";
 import { LocationsService } from "src/modules/locations";
 import { parseOrderBy } from "src/utils";
+import {
+    CreateLocationDto,
+    UpdateLocationDto,
+} from "src/modules/locations/dto";
 
 @Controller("locations")
 export class LocationsController {
@@ -46,5 +57,59 @@ export class LocationsController {
             data: result,
             meta: meta,
         };
+    }
+
+    @Get(":id")
+    async findOne(
+        @Param(
+            "id",
+            new ParseIntPipe({
+                errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE,
+            }),
+        )
+        id: number,
+    ) {
+        const result = await this.locationsService.location({ id: id });
+
+        return result;
+    }
+
+    @Post()
+    async create(@Body() createLocationDto: CreateLocationDto) {
+        const result =
+            await this.locationsService.createLocation(createLocationDto);
+
+        return result;
+    }
+
+    @Patch(":id")
+    async update(
+        @Param(
+            "id",
+            new ParseIntPipe({
+                errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE,
+            }),
+        )
+        id: number,
+        @Body() updateLocationDto: UpdateLocationDto,
+    ) {
+        const result = await this.locationsService.updateLocation({
+            where: { id: id },
+            data: { ...updateLocationDto },
+        });
+
+        return result;
+    }
+
+    @Delete("many")
+    async deleteMany(
+        @Query("ids", new ParseArrayPipe({ items: Number, separator: "," }))
+        ids: number[],
+    ) {
+        const result = await this.locationsService.removeManyLocations({
+            where: { id: { in: ids } },
+        });
+
+        return result;
     }
 }
