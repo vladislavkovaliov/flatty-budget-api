@@ -7,6 +7,20 @@ import { Location } from "src/modules/locations/entries";
 export class LocationsService {
     constructor(private prisma: PrismaService) {}
 
+    async createLocation(data: Prisma.locationsCreateInput) {
+        return this.prisma.locations.create({
+            data: data,
+        });
+    }
+
+    async location(
+        locationsWhereUniqueInput: Prisma.locationsWhereUniqueInput,
+    ): Promise<Location | null> {
+        return this.prisma.locations.findUnique({
+            where: locationsWhereUniqueInput,
+        });
+    }
+
     async getLocations(params: {
         skip?: number;
         take?: number;
@@ -23,5 +37,34 @@ export class LocationsService {
             where: where,
             orderBy: orderBy,
         });
+    }
+
+    async updateLocation({
+        where,
+        data,
+    }: {
+        where: Prisma.locationsWhereUniqueInput;
+        data: Prisma.locationsUpdateInput;
+    }) {
+        return this.prisma.locations.update({
+            data: data,
+            where: where,
+        });
+    }
+
+    async removeLocations({
+        where,
+    }: {
+        where: Prisma.locationsWhereUniqueInput;
+    }) {
+        return this.prisma.locations.delete({ where: where });
+    }
+
+    async removeManyLocations({
+        where,
+    }: {
+        where: Prisma.locationsWhereInput;
+    }) {
+        return this.prisma.locations.deleteMany({ where: where });
     }
 }

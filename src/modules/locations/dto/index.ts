@@ -1,1 +1,2 @@
-export { CreateLocationDto } from "./create-locations.dto";
+export { CreateLocationDto } from "./create-location.dto";
+export { UpdateLocationDto } from "./update-location.dto";
