@@ -13,31 +13,31 @@ import {
     Query,
 } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
-import { CreateUserDto, UpdateUserDto } from "src/modules/users/dto";
-import { UsersService } from "src/modules/users/users.service";
+import { PaymentsService } from "src/modules/payments/payments.service";
+import { CreatePaymentDto, UpdatePaymentDto } from "src/modules/payments/dto";
 import { parseOrderBy } from "src/utils";
 
-@Controller("users")
-export class UsersController {
-    constructor(private readonly usersService: UsersService) {}
-
-    @Get("status")
-    status() {
-        return { status: 200 };
-    }
+@Controller("payments")
+export class PaymentsController {
+    constructor(private readonly paymentsService: PaymentsService) {}
 
     // TODO: updates swagger query params make them optional as well
     @Get()
     async findAll(
         @Query("skip", new ParseIntPipe({ optional: true })) skip: number,
-        @Query("take", new ParseIntPipe({ optional: true })) take: number,
+        @Query(
+            "take",
+            new DefaultValuePipe(10),
+            new ParseIntPipe({ optional: true }),
+        )
+        take: number,
         @Query("orderBy", new DefaultValuePipe(undefined)) orderBy: string,
     ) {
-        const result = await this.usersService.getUsers({
+        const result = await this.paymentsService.getPayments({
             skip: skip,
             take: take,
             orderBy:
-                parseOrderBy<Prisma.usersOrderByWithRelationInput>(orderBy),
+                parseOrderBy<Prisma.paymentsOrderByWithRelationInput>(orderBy),
         });
 
         const meta = {
@@ -54,17 +54,6 @@ export class UsersController {
         };
     }
 
-    @Get("by-name/:name")
-    async findAllByName(@Param("name") name: string) {
-        const result = await this.usersService.getUsers({
-            where: {
-                name: name,
-            },
-        });
-
-        return result;
-    }
-
     @Get(":id")
     async findOne(
         @Param(
@@ -75,7 +64,7 @@ export class UsersController {
         )
         id: number,
     ) {
-        const result = await this.usersService.user({
+        const result = await this.paymentsService.payment({
             id: id,
         });
 
@@ -83,8 +72,9 @@ export class UsersController {
     }
 
     @Post()
-    async create(@Body() createUserDto: CreateUserDto) {
-        const result = await this.usersService.createUser(createUserDto);
+    async create(@Body() createPaymentDto: CreatePaymentDto) {
+        const result =
+            await this.paymentsService.createPayment(createPaymentDto);
 
         return result;
     }
@@ -98,11 +88,11 @@ export class UsersController {
             }),
         )
         id: number,
-        @Body() updateUserDto: UpdateUserDto,
+        @Body() updatePaymentDto: UpdatePaymentDto,
     ) {
-        const result = await this.usersService.updateUser({
+        const result = await this.paymentsService.updatePayment({
             where: { id: id },
-            data: { ...updateUserDto },
+            data: { ...updatePaymentDto },
         });
 
         return result;
@@ -119,7 +109,7 @@ export class UsersController {
         )
         ids: number[],
     ) {
-        const result = await this.usersService.removeManyUsers({
+        const result = await this.paymentsService.removeManyPayments({
             where: { id: { in: ids } },
         });
 

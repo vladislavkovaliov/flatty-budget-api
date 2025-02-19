@@ -6,6 +6,7 @@ import { PrismaService } from "src/databases/prisma";
 import { UsersModule } from "src/modules/users";
 import { LocationsModule } from "src/modules/locations";
 import { CategoriesModule } from "src/modules/categories";
+import { PaymentsModule } from "src/modules/payments";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 
@@ -16,6 +17,7 @@ import { AppService } from "./app.service";
         UsersModule,
         LocationsModule,
         CategoriesModule,
+        PaymentsModule,
     ],
     controllers: [AppController],
     providers: [AppService, PrismaService],

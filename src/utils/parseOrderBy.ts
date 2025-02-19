@@ -1,8 +1,6 @@
-import { Prisma } from "@prisma/client";
-
-export function parseOrderBy(orderBy?: string) {
+export function parseOrderBy<T>(orderBy?: string) {
     const parsedOrderBy = (orderBy ? JSON.parse(orderBy) : undefined) as
-        | Prisma.locationsOrderByWithRelationInput
+        | T
         | undefined;
 
     return parsedOrderBy;

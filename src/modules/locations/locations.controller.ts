@@ -18,6 +18,7 @@ import {
     CreateLocationDto,
     UpdateLocationDto,
 } from "src/modules/locations/dto";
+import { Prisma } from "@prisma/client";
 
 @Controller("locations")
 export class LocationsController {
@@ -42,7 +43,8 @@ export class LocationsController {
         const result = await this.locationsService.getLocations({
             skip: skip,
             take: take,
-            orderBy: parseOrderBy(orderBy),
+            orderBy:
+                parseOrderBy<Prisma.locationsOrderByWithRelationInput>(orderBy),
         });
 
         const meta = {

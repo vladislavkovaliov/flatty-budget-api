@@ -12,6 +12,7 @@ import {
     Post,
     Query,
 } from "@nestjs/common";
+import { Prisma } from "@prisma/client";
 import { CategoriesService } from "src/modules/categories/categories.service";
 import {
     CreateCategoryDto,
@@ -42,7 +43,10 @@ export class CategoriesController {
         const result = await this.categoriesService.getCategories({
             skip: skip,
             take: take,
-            orderBy: parseOrderBy(orderBy),
+            orderBy:
+                parseOrderBy<Prisma.categoriesOrderByWithRelationInput>(
+                    orderBy,
+                ),
         });
 
         const meta = {
